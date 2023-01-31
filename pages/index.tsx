@@ -6,6 +6,11 @@ import { InferGetStaticPropsType } from 'next';
 import Link from 'next/link';
 import LocaleSwitcher from '@/src/LocaleSwitcher';
 
+interface Project {
+	id: string;
+	name: string;
+}
+
 export default function Home(
 	props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
@@ -24,7 +29,11 @@ export default function Home(
 					initialLanguage={props._nextI18Next?.initialLocale || 'en'}
 				/>
 				<div className={styles.description}>{t('common:hello')}</div>
-
+				<ol>
+					{props.projects.map((project) => {
+						return <li key={project.id}>{project.name}</li>;
+					})}
+				</ol>
 				<Link href={'/test'}>{t('common:test')}</Link>
 			</main>
 		</>
@@ -32,9 +41,28 @@ export default function Home(
 }
 
 export const getStaticProps = async ({ locale }: { locale: string }) => {
+	let projects: Project[] = [];
+	await fetch(
+		'https://app-staging.plant-for-the-planet.org/app/projects?' +
+			new URLSearchParams({
+				_scope: 'map',
+				locale,
+			})
+	)
+		.then((res) => res.json())
+		.then((response) => {
+			projects = response.map((item: { properties: {} }) => {
+				return {
+					id: (item.properties as Project).id,
+					name: (item.properties as Project).name,
+				};
+			});
+		});
+
 	return {
 		props: {
 			...(await serverSideTranslations(locale || 'en', ['common'])),
+			projects,
 		},
 		revalidate: 30,
 	};
