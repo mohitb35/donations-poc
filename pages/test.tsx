@@ -4,8 +4,9 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { InferGetStaticPropsType } from 'next';
 import Link from 'next/link';
+import LocaleSwitcher from '@/src/LocaleSwitcher';
 
-export default function Home(
+export default function TestPage(
 	props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
 	const { t } = useTranslation();
@@ -13,15 +14,14 @@ export default function Home(
 	return (
 		<>
 			<Head>
-				<title>Donations POC</title>
-				<meta name="description" content="Donations POC" />
+				<title>Test - Donations POC</title>
+				<meta name="description" content="Test Page - Donations POC" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className={styles.main}>
-				<div className={styles.description}>{t('common:hello')}</div>
-
-				<Link href={'/test'}>{t('common:test')}</Link>
+				<div className={styles.description}>{t('common:test')}</div>
+				<Link href={'/'}>{t('common:back')}</Link>
 			</main>
 		</>
 	);
@@ -32,6 +32,5 @@ export const getStaticProps = async ({ locale }: { locale: string }) => {
 		props: {
 			...(await serverSideTranslations(locale || 'en', ['common'])),
 		},
-		revalidate: 30,
 	};
 };
