@@ -20,6 +20,9 @@ export default function TestPage(
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className={styles.main}>
+				<LocaleSwitcher
+					initialLanguage={props._nextI18Next?.initialLocale || 'en'}
+				/>
 				<div className={styles.description}>{t('common:test')}</div>
 				<Link href={'/'}>{t('common:back')}</Link>
 			</main>
